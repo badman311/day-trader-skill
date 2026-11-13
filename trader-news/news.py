@@ -192,7 +192,12 @@ class Fetcher(object):
 
 
 def yahoo_symbol(ticker):
-    return ticker.upper().replace(".", "-")
+    """BRK.B -> BRK-B (share class). Exchange suffixes like DX-Y.NYB or SHOP.TO stay as typed."""
+    t = ticker.upper()
+    head, dot, tail = t.rpartition(".")
+    if dot and len(tail) == 1 and head.isalpha():
+        return head + "-" + tail
+    return t
 
 
 def cik_map(fetcher, state):
